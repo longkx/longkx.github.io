@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="NodeselectorNodeselector是最简明的节点绑定方式。通过下面的命令可以给指定的Node添加label（旧版本可能没有label命令，可通过其他方式添加或修改）： 1kubectl label Node &lt;node-name&gt; &lt;label-key&gt;&#x3D;&lt;label-value&gt; 如： 1kubectl label Node node1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pod亲和与反亲和">
+<meta property="og:url" content="http://example.com/2017/11/13/Pods%E4%BA%B2%E5%92%8C%E4%B8%8E%E5%8F%8D%E4%BA%B2%E5%92%8C/index.html">
+<meta property="og:site_name" content="Longkx&#39;s notebook">
+<meta property="og:description" content="NodeselectorNodeselector是最简明的节点绑定方式。通过下面的命令可以给指定的Node添加label（旧版本可能没有label命令，可通过其他方式添加或修改）： 1kubectl label Node &lt;node-name&gt; &lt;label-key&gt;&#x3D;&lt;label-value&gt; 如： 1kubectl label Node node1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-11-13T09:16:24.000Z">
+<meta property="article:modified_time" content="2020-11-20T03:20:56.010Z">
+<meta property="article:author" content="Long Kaixiang">
+<meta property="article:tag" content="亲和">
+<meta property="article:tag" content="反亲和">
+<meta property="article:tag" content="Nodeselector">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2017/11/13/Pods%E4%BA%B2%E5%92%8C%E4%B8%8E%E5%8F%8D%E4%BA%B2%E5%92%8C/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Pod亲和与反亲和 | Longkx's notebook</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Longkx's notebook</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Nodeselector"><span class="nav-number">1.</span> <span class="nav-text">Nodeselector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4label"><span class="nav-number">2.</span> <span class="nav-text">默认label</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%B2%E5%92%8C%E4%B8%8E%E5%8F%8D%E4%BA%B2%E5%92%8C-Affinity-and-anti-affinity"><span class="nav-number">3.</span> <span class="nav-text">亲和与反亲和(Affinity and anti-affinity)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E4%BA%B2%E5%92%8C%EF%BC%88Node-affinity%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">节点亲和（Node affinity）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod%E4%BA%B2%E5%92%8C%E4%B8%8E%E5%8F%8D%E4%BA%B2%E5%92%8C%EF%BC%88Inter-pod-affinity-and-anti-affinity%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">Pod亲和与反亲和（Inter-pod affinity and anti-affinity）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%96%87%E6%A1%A3"><span class="nav-number">4.</span> <span class="nav-text">相关文档</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Long Kaixiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/11/13/Pods%E4%BA%B2%E5%92%8C%E4%B8%8E%E5%8F%8D%E4%BA%B2%E5%92%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Long Kaixiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Longkx's notebook">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pod亲和与反亲和
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-13 17:16:24" itemprop="dateCreated datePublished" datetime="2017-11-13T17:16:24+08:00">2017-11-13</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-20 11:20:56" itemprop="dateModified" datetime="2020-11-20T11:20:56+08:00">2020-11-20</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Nodeselector"><a href="#Nodeselector" class="headerlink" title="Nodeselector"></a>Nodeselector</h2><p><strong>Nodeselector</strong>是最简明的节点绑定方式。<br>通过下面的命令可以给指定的<strong>Node</strong>添加<strong>label</strong>（旧版本可能没有<strong>label</strong>命令，可通过其他方式添加或修改）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label Node &lt;node-name&gt; &lt;label-key&gt;&#x3D;&lt;label-value&gt;</span><br></pre></td></tr></table></figure>
+<p>如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label Node node1 disktype&#x3D;ssd</span><br></pre></td></tr></table></figure>
+<p><strong>Pod</strong>的<strong>yaml</strong>如下添加了<strong>Nodeselector</strong>域： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  labels:</span><br><span class="line">    env: test</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: nginx</span><br><span class="line">    image: nginx</span><br><span class="line">    imagePullPolicy: IfNotPresent</span><br><span class="line">  Nodeselector:</span><br><span class="line">    disktype: ssd</span><br></pre></td></tr></table></figure>
+<p>这样执行创建命令（kubectl create -f pod.yaml）后，<strong>Pod</strong>会调度到有指定键值对disktype: ssd的节点上运行。</p>
+<h2 id="默认label"><a href="#默认label" class="headerlink" title="默认label"></a>默认label</h2><p>在kubernetes v1.4版本之后，<strong>Node</strong>会默认添加以下几个<strong>label</strong>：</p>
+<ul>
+<li>kubernetes.io/hostname</li>
+<li>failure-domain.beta.kubernetes.io/zone</li>
+<li>failure-domain.beta.kubernetes.io/region</li>
+<li>beta.kubernetes.io/instance-type</li>
+<li>beta.kubernetes.io/os</li>
+<li>beta.kubernetes.io/arch</li>
+</ul>
+<p>可以通过下面命令查看<strong>Node</strong>的<strong>labels</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get Node --show-labels</span><br></pre></td></tr></table></figure>
+
+<h2 id="亲和与反亲和-Affinity-and-anti-affinity"><a href="#亲和与反亲和-Affinity-and-anti-affinity" class="headerlink" title="亲和与反亲和(Affinity and anti-affinity)"></a>亲和与反亲和(Affinity and anti-affinity)</h2><p><strong>Pod</strong>亲和与反亲和位于<strong>Podpec</strong>中的<strong>affinity</strong>域下。<br><strong>affinity/anti-affinity</strong>极大地扩展了<strong>Pod</strong>的绑定方式，提供了更多样化的调度策略。主要有以下优点：</p>
+<ol>
+<li>语法更加丰富，支持更多的逻辑。</li>
+<li>可以进行<strong>软指定</strong>，当<strong>Node</strong>都不满足条件时，<strong>Pod</strong>依然会被运行。</li>
+<li>可以根据节点上<strong>Pod</strong>的<strong>label</strong>进行调度，从而实现<strong>Pod</strong>的亲和与反亲和。</li>
+</ol>
+<p>亲和与反亲和包含<strong>节点亲和（node affinity）</strong>和<strong>Pod亲和与反亲和（inter-pod affinity/anti-affinity）</strong>两个类型。前者与<strong>Nodeselector</strong>类似，是针对<strong>Node</strong>进行绑定，但是具有亲和的前两个优点。而后者则是针对<strong>Pod</strong>的调度，兼具三个优点。</p>
+<ul>
+<li>Nodeselector现版本仍然有效，但最终会被亲和所取代。</li>
+</ul>
+<h3 id="节点亲和（Node-affinity）"><a href="#节点亲和（Node-affinity）" class="headerlink" title="节点亲和（Node affinity）"></a>节点亲和（Node affinity）</h3><p>节点亲和出现在kubernetes v1.2α版本。其包含两种类型：<strong>requiredDuringSchedulingIgnoredDuringExecution</strong>和<strong>preferredDuringSchedulingIgnoredDuringExecution</strong>。前者指定的规则必须硬性满足（硬亲和），而后者的规则是作为偏好，调度器会尝试但不保证满足（软亲和）。名字中的”DuringSchedulingIgnoredDuringExecution”是指<strong>Pod</strong>运行中如果<strong>Node</strong>不再满足亲和规则，<strong>Pod</strong>仍然会在该<strong>Node</strong>上运行。未来版本<strong>kubernetes</strong>将计划提供<strong>requiredDuringSchedulingRequiredDuringExecution</strong>参数，用以驱逐<strong>Node</strong>上不再满足亲和规则的<strong>Pod</strong>。<br>看下面这个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: with-node-affinity</span><br><span class="line">spec:</span><br><span class="line">  affinity:</span><br><span class="line">    nodeAffinity:</span><br><span class="line">      requiredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">        NodeselectorTerms:</span><br><span class="line">        - matchExpressions:</span><br><span class="line">          - key: kubernetes.io&#x2F;e2e-az-name</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - e2e-az1</span><br><span class="line">            - e2e-az2</span><br><span class="line">      preferredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">      - weight: 1</span><br><span class="line">        preference:</span><br><span class="line">          matchExpressions:</span><br><span class="line">          - key: another-node-label-key</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - another-node-label-value</span><br><span class="line">  containers:</span><br><span class="line">  - name: with-node-affinity</span><br><span class="line">    image: gcr.io&#x2F;google_containers&#x2F;pause:2.0</span><br></pre></td></tr></table></figure>
+<p>该<strong>Pod</strong>会在满足<strong>kubernetes.io/e2e-az-name</strong>值为<strong>e2e-az1</strong>或<strong>e2e-az2</strong>的<strong>Node</strong>中优先调度到<strong>another-node-label-key</strong>值为<strong>another-node-label-value</strong>的<strong>Node</strong>上。<br>在例子中看到<strong>operator</strong>值为<strong>In</strong>，同时它还支持<strong>NotIn</strong>，<strong>Exists</strong>，<strong>DoesNotExist</strong>，<strong>Gt</strong>，<strong>Lt</strong>。我们可以通过<strong>NotIn</strong>，<strong>DoesNotExist</strong>来实现<strong>Node</strong>的反亲和。使用<strong>node affinity</strong>需要注意的几点如下：</p>
+<ul>
+<li><strong>Nodeselector</strong>和<strong>nodeAffinity</strong>同时设定时，两个规则同时生效。</li>
+<li>当<strong>nodeAffinity</strong>下有多个<strong>NodeselectorTerms</strong>时，他们之间是<strong>或</strong>的关系，只满足其中一个<strong>NodeselectorTerms</strong>的<strong>Node</strong>都符合亲和规则。</li>
+<li>当<strong>NodeselectorTerms</strong>下有多个<strong>matchExpressions</strong>时，他们之间是<strong>和</strong>的关系，满足全部<strong>matchExpressions</strong>的<strong>Node</strong>才符合亲和规则。</li>
+<li>当<strong>Node</strong>的<strong>label</strong>改变而不满足规则时，<strong>Pod</strong>不会被驱逐，即亲和规则只在<strong>Pod</strong>启动时做一次判断。</li>
+</ul>
+<p>更多信息请参考<a target="_blank" rel="noopener" href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/nodeaffinity.md">Node affinity and Nodeselector</a></p>
+<h3 id="Pod亲和与反亲和（Inter-pod-affinity-and-anti-affinity）"><a href="#Pod亲和与反亲和（Inter-pod-affinity-and-anti-affinity）" class="headerlink" title="Pod亲和与反亲和（Inter-pod affinity and anti-affinity）"></a>Pod亲和与反亲和（Inter-pod affinity and anti-affinity）</h3><p>Pod亲和与反亲和出现在kubernetes v1.4版本。<br>与<strong>Node</strong>亲和相同，<strong>Pod</strong>亲和与反亲和也包含<strong>requiredDuringSchedulingIgnoredDuringExecution</strong>和<strong>preferredDuringSchedulingIgnoredDuringExecution</strong>两种类型，分别对应硬亲和和软亲和。</p>
+<ul>
+<li>Pod亲和与反亲和需要大量的处理，这样会显著减慢大集群中的调度。我们不建议在大于几百个节点的集群中使用它们。</li>
+<li>建议当两个<strong>Pod</strong>相互之间访问较多时可使用硬亲和使他们能在同一<strong>Node</strong>上运行。而<strong>Pod</strong>反亲和时因为有可能<strong>Pod</strong>数量会大于节点<strong>Node</strong>数，建议使用软亲和。</li>
+</ul>
+<p>看下面这个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: with-pod-affinity</span><br><span class="line">spec:</span><br><span class="line">  affinity:</span><br><span class="line">    podAffinity:</span><br><span class="line">      requiredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">      - labelSelector:</span><br><span class="line">          matchExpressions:</span><br><span class="line">          - key: security</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - S1</span><br><span class="line">        topologyKey: failure-domain.beta.kubernetes.io&#x2F;zone</span><br><span class="line">    podAntiAffinity:</span><br><span class="line">      preferredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">      - weight: 100</span><br><span class="line">        podAffinityTerm:</span><br><span class="line">          labelSelector:</span><br><span class="line">            matchExpressions:</span><br><span class="line">            - key: security</span><br><span class="line">              operator: In</span><br><span class="line">              values:</span><br><span class="line">              - S2</span><br><span class="line">          topologyKey: kubernetes.io&#x2F;hostname</span><br><span class="line">  containers:</span><br><span class="line">  - name: with-pod-affinity</span><br><span class="line">    image: gcr.io&#x2F;google_containers&#x2F;pause:2.0</span><br></pre></td></tr></table></figure>
+
+<p>这个<strong>Pod</strong>的调度规则如下：<br><strong>Pod</strong>亲和为硬亲和，要求部署到的<strong>Node</strong>必须包含带有<strong>failure-domain.beta.kubernetes.io/zone</strong>的<strong>key</strong>，且该<strong>Node</strong>上运行着包含<strong>security: S1</strong>的<strong>Pod</strong><br><strong>Pod</strong>反亲和为软亲和，要求<strong>Pod</strong>优先部署到不满足条件（<strong>Node</strong>包含带有<strong>kubernetes.io/hostname</strong>的<strong>key</strong>，且该<strong>Node</strong>上运行着包含<strong>security: S2</strong>的<strong>Pod</strong>）的<strong>Node</strong>上</p>
+<p>虽然<strong>topologyKey</strong>基本可以是任何合法值，但在考虑到性能和安全方面，有如下的限制：</p>
+<ul>
+<li>反亲和为硬亲和（<strong>RequiredDuringScheduling</strong>）时，<strong>topologyKey</strong>不能为空。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/admin/admission-controllers">Admission Controllers</a>**中设置</strong><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/admin/admission-controllers/#limitpodhardantiaffinity">LimitPodHardAntiAffinity</a><strong>启用时，反亲和为硬亲和（</strong>RequiredDuringScheduling<strong>）的</strong>topologyKey<strong>只能为</strong>kubernetes.io/hostname**。</li>
+<li>在反亲和为软亲和（<strong>PreferredDuringScheduling</strong>）时，<strong>topologyKey</strong>为空时则指代所有的拓扑结构。但现在“所有的拓扑结构”被限制为以下几个<strong>topologyKey</strong>：<strong>kubernetes.io/hostname</strong>, <strong>failure-domain.beta.kubernetes.io/zone</strong>和<strong>failure-domain.beta.kubernetes.io/region</strong>。</li>
+<li>除了以上几种情况，<strong>topologyKey</strong>可以是任意合法值。</li>
+</ul>
+<h2 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node/">https://kubernetes.io/docs/concepts/configuration/assign-pod-node/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/nodeaffinity.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/nodeaffinity.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/podaffinity.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/podaffinity.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/admin/admission-controllers/#limitpodhardantiaffinity">https://kubernetes.io/docs/admin/admission-controllers/#limitpodhardantiaffinity</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BA%B2%E5%92%8C/" rel="tag"># 亲和</a>
+              <a href="/tags/%E5%8F%8D%E4%BA%B2%E5%92%8C/" rel="tag"># 反亲和</a>
+              <a href="/tags/Nodeselector/" rel="tag"># Nodeselector</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/11/17/kubernetes%E8%B5%84%E6%BA%90%E6%8D%A2%E7%AE%97/" rel="next" title="kubernetes资源换算">
+                  kubernetes资源换算 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Long Kaixiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+</body>
+</html>

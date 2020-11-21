@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="由于项目上要用节点亲和需要返回所有可用的节点。遂整理一下Node的属性，特别是status。 Node是kubernetes集群中的一台工作中的虚拟机或者物理机。每个Node上运行着Docker,kubelet,kube-proxy。详细介绍参考The Kubernetes Node Node StatusAddress HostName：主机名。可以通过kubelet的**–hostname-o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes节点（Node）状态">
+<meta property="og:url" content="http://example.com/2017/11/28/Node%E7%8A%B6%E6%80%81/index.html">
+<meta property="og:site_name" content="Longkx&#39;s notebook">
+<meta property="og:description" content="由于项目上要用节点亲和需要返回所有可用的节点。遂整理一下Node的属性，特别是status。 Node是kubernetes集群中的一台工作中的虚拟机或者物理机。每个Node上运行着Docker,kubelet,kube-proxy。详细介绍参考The Kubernetes Node Node StatusAddress HostName：主机名。可以通过kubelet的**–hostname-o">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-11-28T03:18:35.000Z">
+<meta property="article:modified_time" content="2020-11-20T03:20:56.008Z">
+<meta property="article:author" content="Long Kaixiang">
+<meta property="article:tag" content="node">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2017/11/28/Node%E7%8A%B6%E6%80%81/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>kubernetes节点（Node）状态 | Longkx's notebook</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Longkx's notebook</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Node-Status"><span class="nav-number">1.</span> <span class="nav-text">Node Status</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Address"><span class="nav-number">1.1.</span> <span class="nav-text">Address</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Condition"><span class="nav-number">1.2.</span> <span class="nav-text">Condition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Capacity"><span class="nav-number">1.3.</span> <span class="nav-text">Capacity</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Node%E7%AE%A1%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">Node管理</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Long Kaixiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/11/28/Node%E7%8A%B6%E6%80%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Long Kaixiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Longkx's notebook">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kubernetes节点（Node）状态
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-28 11:18:35" itemprop="dateCreated datePublished" datetime="2017-11-28T11:18:35+08:00">2017-11-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-20 11:20:56" itemprop="dateModified" datetime="2020-11-20T11:20:56+08:00">2020-11-20</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>由于项目上要用节点亲和需要返回所有可用的节点。遂整理一下<strong>Node</strong>的属性，特别是<strong>status</strong>。</p>
+<p><strong>Node</strong>是<strong>kubernetes</strong>集群中的一台工作中的虚拟机或者物理机。每个<strong>Node</strong>上运行着<strong>Docker</strong>,<strong>kubelet</strong>,<strong>kube-proxy</strong>。<br>详细介绍参考<a target="_blank" rel="noopener" href="https://git.k8s.io/community/contributors/design-proposals/architecture/architecture.md#the-kubernetes-node">The Kubernetes Node</a></p>
+<h1 id="Node-Status"><a href="#Node-Status" class="headerlink" title="Node Status"></a>Node Status</h1><h2 id="Address"><a href="#Address" class="headerlink" title="Address"></a>Address</h2><ul>
+<li><strong>HostName</strong>：主机名。可以通过<strong>kubelet</strong>的**–hostname-override**参数重写。</li>
+<li><strong>ExternalIP</strong>：集群外部访问<strong>IP</strong>。</li>
+<li><strong>InternalIP</strong>：集群内部访问<strong>IP</strong>。</li>
+</ul>
+<h2 id="Condition"><a href="#Condition" class="headerlink" title="Condition"></a>Condition</h2><p><strong>Condition</strong>用以描述机器的运行状态。</p>
+<ul>
+<li><p><strong>OutOfDisk</strong>：当节点上没有充足的空间创建<strong>Pod</strong>时值为<strong>True</strong>。</p>
+</li>
+<li><p><strong>Ready</strong>：当节点是健康的状态且可以创建<strong>Pod</strong>时为<strong>True</strong>；节点不健康且无法创建<strong>Pod</strong>时为<strong>False</strong>；而当<strong>node controller</strong>40s内无法检查到<strong>Node</strong>状态时，值为<strong>Unknown</strong>。</p>
+</li>
+<li><p><strong>MemoryPressure</strong>：当节点的内存使用存在压力，即可用内存低时值为<strong>True</strong>。</p>
+</li>
+<li><p><strong>DiskPressure</strong>：当节点的硬盘空间存在压力，即可用存储低时值为<strong>True</strong>。</p>
+</li>
+<li><p><strong>NetworkUnavailable</strong>：节点的网络配置异常时为<strong>True</strong>。</p>
+</li>
+</ul>
+<p>当<strong>Ready</strong>为<strong>Unknown</strong>或者<strong>False</strong>状态超过<strong>kube-controller-manager</strong>的参数<strong>pod-eviction-timeout</strong>所设定的时间（默认5分钟）时，该节点上的所有<strong>Pod</strong>将会被<strong>Node Controller</strong>删除。</p>
+<h2 id="Capacity"><a href="#Capacity" class="headerlink" title="Capacity"></a>Capacity</h2><p><strong>Capacity</strong>用来描述节点的<strong>CPU</strong>，<strong>memory</strong>，以及可以创建<strong>Pod</strong>的最大数量。</p>
+<p>##Info</p>
+<p>通过<strong>Kubelet</strong>获取的节点一般信息。</p>
+<h1 id="Node管理"><a href="#Node管理" class="headerlink" title="Node管理"></a>Node管理</h1><p>标记一个节点使其不可被调度可以使新<strong>Pod</strong>不会被调度到这个节点上，同时不会影响已经在节点上运行的<strong>Pod</strong>。这是节点重新启动之前必要的的准备步骤。命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl cordon $NODENAME</span><br></pre></td></tr></table></figure>
+
+<p>通过下面的占位<strong>Pod</strong>可以实现预留一部分节点资源用于处理非<strong>Pod</strong>进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: resource-reserver</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: sleep-forever</span><br><span class="line">    image: gcr.io&#x2F;google_containers&#x2F;pause:0.8.0</span><br><span class="line">    resources:</span><br><span class="line">      requests:</span><br><span class="line">        cpu: 100m</span><br><span class="line">        memory: 100Mi</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/node/" rel="tag"># node</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/11/17/kubernetes%E8%B5%84%E6%BA%90%E6%8D%A2%E7%AE%97/" rel="prev" title="kubernetes资源换算">
+                  <i class="fa fa-chevron-left"></i> kubernetes资源换算
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/22/AWS%20SAP/" rel="next" title="aws sap笔记">
+                  aws sap笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Long Kaixiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+</body>
+</html>

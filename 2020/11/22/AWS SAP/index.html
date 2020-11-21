@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="AWS Rekognition使用经过验证的、高度可扩展且无需机器学习专业知识就可使用的深度学习技术，Amazon Rekognition 可以轻松将图像和视频分析功能添加到您的应用程序中。借助 Amazon Rekognition，您可以在图像和视频中识别对象、人物、文本、场景和活动，也可以检测任何不适宜的内容。Amazon Rekognition 还提供高度精确的面孔分析和面孔搜索功能，您可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="aws sap笔记">
+<meta property="og:url" content="http://example.com/2020/11/22/AWS%20SAP/index.html">
+<meta property="og:site_name" content="Longkx&#39;s notebook">
+<meta property="og:description" content="AWS Rekognition使用经过验证的、高度可扩展且无需机器学习专业知识就可使用的深度学习技术，Amazon Rekognition 可以轻松将图像和视频分析功能添加到您的应用程序中。借助 Amazon Rekognition，您可以在图像和视频中识别对象、人物、文本、场景和活动，也可以检测任何不适宜的内容。Amazon Rekognition 还提供高度精确的面孔分析和面孔搜索功能，您可以">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-21T17:30:08.000Z">
+<meta property="article:modified_time" content="2020-11-21T17:30:36.149Z">
+<meta property="article:author" content="Long Kaixiang">
+<meta property="article:tag" content="aws">
+<meta property="article:tag" content="sap">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2020/11/22/AWS%20SAP/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>aws sap笔记 | Longkx's notebook</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Longkx's notebook</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Rekognition"><span class="nav-number">1.</span> <span class="nav-text">AWS Rekognition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#S3"><span class="nav-number">2.</span> <span class="nav-text">S3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VPC"><span class="nav-number">3.</span> <span class="nav-text">VPC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kinesis"><span class="nav-number">4.</span> <span class="nav-text">Kinesis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Simple-Queue-Service-SQS"><span class="nav-number">5.</span> <span class="nav-text">Amazon Simple Queue Service (SQS)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-DynamoDB"><span class="nav-number">6.</span> <span class="nav-text">Amazon DynamoDB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Lambda"><span class="nav-number">7.</span> <span class="nav-text">AWS Lambda</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Step-Functions"><span class="nav-number">8.</span> <span class="nav-text">AWS Step Functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Cognito"><span class="nav-number">9.</span> <span class="nav-text">Amazon Cognito</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Elastic-Beanstalk"><span class="nav-number">10.</span> <span class="nav-text">AWS Elastic Beanstalk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-AppStream-2-0"><span class="nav-number">11.</span> <span class="nav-text">Amazon AppStream 2.0</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Key-Management-Service-KMS"><span class="nav-number">12.</span> <span class="nav-text">AWS Key Management Service (KMS)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-CloudHSM"><span class="nav-number">13.</span> <span class="nav-text">AWS CloudHSM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-CloudWatch"><span class="nav-number">14.</span> <span class="nav-text">Amazon CloudWatch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Route-53"><span class="nav-number">15.</span> <span class="nav-text">Amazon Route 53</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Elastic-Load-Balancing-ELB"><span class="nav-number">16.</span> <span class="nav-text">Elastic Load Balancing(ELB)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-ElastiCache"><span class="nav-number">17.</span> <span class="nav-text">Amazon ElastiCache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Schema-Conversion-Tool-AWS-SCT"><span class="nav-number">18.</span> <span class="nav-text">AWS Schema Conversion Tool (AWS SCT)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Application-Discovery-Service"><span class="nav-number">19.</span> <span class="nav-text">AWS Application Discovery Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Server-Migration-Service-SMS"><span class="nav-number">20.</span> <span class="nav-text">AWS Server Migration Service (SMS)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-CloudFormation"><span class="nav-number">21.</span> <span class="nav-text">AWS CloudFormation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Auto-Scaling"><span class="nav-number">22.</span> <span class="nav-text">AWS Auto Scaling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Batch"><span class="nav-number">23.</span> <span class="nav-text">AWS Batch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-X-Ray"><span class="nav-number">24.</span> <span class="nav-text">AWS X-Ray</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Glue"><span class="nav-number">25.</span> <span class="nav-text">AWS Glue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-EMR"><span class="nav-number">26.</span> <span class="nav-text">Amazon EMR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Fargate"><span class="nav-number">27.</span> <span class="nav-text">AWS Fargate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spot-Fleet-API"><span class="nav-number">28.</span> <span class="nav-text">Spot Fleet API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-CodeBuild"><span class="nav-number">29.</span> <span class="nav-text">AWS CodeBuild</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-CodeDeploy"><span class="nav-number">30.</span> <span class="nav-text">AWS CodeDeploy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-CodePipeline"><span class="nav-number">31.</span> <span class="nav-text">AWS CodePipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Athena"><span class="nav-number">32.</span> <span class="nav-text">Amazon Athena</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VPC%E7%BB%88%E7%AB%AF%E8%8A%82%E7%82%B9-VPC-Endpoint"><span class="nav-number">33.</span> <span class="nav-text">VPC终端节点(VPC Endpoint)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Systems-Manager"><span class="nav-number">34.</span> <span class="nav-text">AWS Systems Manager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Global-Accelerator"><span class="nav-number">35.</span> <span class="nav-text">AWS Global Accelerator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Macie"><span class="nav-number">36.</span> <span class="nav-text">Amazon Macie</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Organizations"><span class="nav-number">37.</span> <span class="nav-text">AWS Organizations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SCP"><span class="nav-number">38.</span> <span class="nav-text">SCP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%BB%84"><span class="nav-number">39.</span> <span class="nav-text">安全组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C-ACL"><span class="nav-number">40.</span> <span class="nav-text">网络 ACL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Service-Catalog"><span class="nav-number">41.</span> <span class="nav-text">AWS Service Catalog</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kibana"><span class="nav-number">42.</span> <span class="nav-text">Kibana</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Inspector"><span class="nav-number">43.</span> <span class="nav-text">Amazon Inspector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-GuardDuty"><span class="nav-number">44.</span> <span class="nav-text">Amazon GuardDuty</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-EventBridge"><span class="nav-number">45.</span> <span class="nav-text">Amazon EventBridge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-IoT-Greengrass"><span class="nav-number">46.</span> <span class="nav-text">AWS IoT Greengrass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Simple-Notification-Service"><span class="nav-number">47.</span> <span class="nav-text">Amazon Simple Notification Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-Redshift"><span class="nav-number">48.</span> <span class="nav-text">Amazon Redshift</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-AppSync"><span class="nav-number">49.</span> <span class="nav-text">AWS AppSync</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAI-%E6%BA%90%E8%AE%BF%E9%97%AE%E8%BA%AB%E4%BB%BD"><span class="nav-number">50.</span> <span class="nav-text">OAI 源访问身份</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Certificate-Manager"><span class="nav-number">51.</span> <span class="nav-text">AWS Certificate Manager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Directory-Service"><span class="nav-number">52.</span> <span class="nav-text">AWS Directory Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-WAF-%E2%80%93-Web-%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">53.</span> <span class="nav-text">AWS WAF – Web 应用程序防火墙</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon-API-Gateway"><span class="nav-number">54.</span> <span class="nav-text">Amazon API Gateway</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Batch-1"><span class="nav-number">55.</span> <span class="nav-text">AWS Batch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-Cost-Explorer"><span class="nav-number">56.</span> <span class="nav-text">AWS Cost Explorer</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Long Kaixiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/22/AWS%20SAP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Long Kaixiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Longkx's notebook">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          aws sap笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-11-22 01:30:08 / 修改时间：01:30:36" itemprop="dateCreated datePublished" datetime="2020-11-22T01:30:08+08:00">2020-11-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/aws/" itemprop="url" rel="index"><span itemprop="name">aws</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="AWS-Rekognition"><a href="#AWS-Rekognition" class="headerlink" title="AWS Rekognition"></a>AWS Rekognition</h2><p>使用经过验证的、高度可扩展且无需机器学习专业知识就可使用的深度学习技术，Amazon Rekognition 可以轻松将图像和视频分析功能添加到您的应用程序中。借助 Amazon Rekognition，您可以在图像和视频中识别对象、人物、文本、场景和活动，也可以检测任何不适宜的内容。Amazon Rekognition 还提供高度精确的面孔分析和面孔搜索功能，您可以使用这些功能来检测、分析和对比面孔，以处理各种用户验证、人员计数和公共安全使用案例。</p>
+<p>借助 Amazon Rekognition 自定义标签，您可以识别图像中特定于您的业务需求的对象和场景。例如，您可以构建模型来对装配线上的特定机器部件进行分类，或检测运行状况不佳的设备。Amazon Rekognition 自定义标签可以帮您完成繁重的模型开发工作，因此您无需具备机器学习经验。您只需提供想要识别的对象或场景的图像，剩下的工作都交由此项服务处理。</p>
+<h2 id="S3"><a href="#S3" class="headerlink" title="S3"></a>S3</h2><h2 id="VPC"><a href="#VPC" class="headerlink" title="VPC"></a>VPC</h2><p>acl是拒绝的，安全组是设置允许的</p>
+<h2 id="Kinesis"><a href="#Kinesis" class="headerlink" title="Kinesis"></a>Kinesis</h2><ul>
+<li>Kinesis无法读取S3事件流</li>
+</ul>
+<p>Amazon Kinesis 可让您轻松收集、处理和分析实时流数据，以便您及时获得见解并对新信息快速做出响应。Amazon Kinesis 提供多种核心功能，可以经济高效地处理任意规模的流数据，同时具有很高的灵活性，让您可以选择最符合应用程序需求的工具。借助 Amazon Kinesis，您可以获取视频、音频、应用程序日志和网站点击流等实时数据，也可以获取用于机器学习、分析和其他应用程序的 IoT 遥测数据。借助 Amazon Kinesis，您可以即刻对收到的数据进行处理和分析并做出响应，无需等到收集完全部数据后才开始进行处理。</p>
+<h2 id="Amazon-Simple-Queue-Service-SQS"><a href="#Amazon-Simple-Queue-Service-SQS" class="headerlink" title="Amazon Simple Queue Service (SQS)"></a>Amazon Simple Queue Service (SQS)</h2><p>Amazon Simple Queue Service (SQS) 是一种完全托管的消息队列服务，可让您分离和扩展微服务、分布式系统和无服务器应用程序。SQS 消除了与管理和运营消息型中间件相关的复杂性和开销，并使开发人员能够专注于重要工作。借助 SQS，您可以在软件组件之间发送、存储和接收任何规模的消息，而不会丢失消息，并且无需其他服务即可保持可用。使用 AWS 控制台、命令行界面或您选择的 SDK 和三个简单的命令，在几分钟内即可开始使用 SQS。</p>
+<ul>
+<li>SQS 提供两种消息队列类型。标准队列提供最高吞吐量、最大努力排序和至少一次传送。SQS FIFO 队列旨在确保按照消息的发送顺序对消息进行严格一次处理。</li>
+<li>SQS无法直接发送数据到DynamoDB</li>
+</ul>
+<h2 id="Amazon-DynamoDB"><a href="#Amazon-DynamoDB" class="headerlink" title="Amazon DynamoDB"></a>Amazon DynamoDB</h2><p>Amazon DynamoDB 是一个键/值和文档数据库，可以在任何规模的环境中提供个位数的毫秒级性能。它是一个<strong>完全托管、多区域多主的持久数据库</strong>，具有适用于 Internet 规模的应用程序的内置安全性、备份和恢复和内存缓存。DynamoDB 每天可处理超过 10 万亿个请求，并可支持每秒超过 2000 万个请求的峰值。</p>
+<ul>
+<li>对于需要以微秒级延迟执行更快访问的使用案例，DynamoDB Accelerator (DAX) 提供了完全托管的内存缓存。</li>
+<li>DynamoDB 可自动纵向扩展和缩减表，以针对容量做出调整并保持性能。</li>
+<li>DynamoDB 支持 ACID 事务，使您能够大规模构建业务关键型应用程序。DynamoDB 默认加密所有数据，并为您的所有表提供细粒度的身份和访问控制。</li>
+</ul>
+<h2 id="AWS-Lambda"><a href="#AWS-Lambda" class="headerlink" title="AWS Lambda"></a>AWS Lambda</h2><p>通过 AWS Lambda，无需预置或管理服务器即可运行代码。您只需按使用的计算时间付费。</p>
+<ul>
+<li>lambda只是执行代码的，不支持搜索，不支持创建索引</li>
+<li>实时数据流处理:您可以使用 AWS Lambda 和 Amazon Kinesis 处理实时流数据，从而跟踪应用程序活动、处理事务处理顺序、分析单击数据流、整理数据、生成指标、筛选日志、建立索引、分析社交媒体以及遥测和计量 IoT 设备数据。</li>
+<li>数据处理:您可以使用 AWS Lambda 执行代码以响应数据更改、系统状态变化或用户操作等触发器。Lambda 可以由 S3、DynamoDB、Kinesis、SNS 和 CloudWatch 等 AWS 服务直接触发，可以连接到现有的 EFS 文件系统，也可以通过 AWS Step Functions 编排到工作流程中。您可借此构建各种实时的无服务器数据处理系统。</li>
+<li>实时文件处理:您可以使用 Amazon S3 触发 AWS Lambda，以便在上传数据后立即对它们进行处理。您还可以直接连接到现有的 Amazon EFS 文件系统，从而支持对大规模文件处理进行大规模并行共享访问。例如，您可以使用 Lambda 实时创建缩略图、转换视频代码、建立文件索引、处理日志、验证内容以及聚合和筛选数据。</li>
+<li>lambda不支持增加cpu，是通过增加内存增加对应的cpu</li>
+<li>lambda并发1000上限</li>
+</ul>
+<h2 id="AWS-Step-Functions"><a href="#AWS-Step-Functions" class="headerlink" title="AWS Step Functions"></a>AWS Step Functions</h2><p>将函数组装到业务关键型应用程序中<br>WS Step Functions 是一个无服务器函数编排工具，可轻松将 AWS Lambda 函数和多个 AWS 服务按顺序安排到业务关键型应用程序中。通过其可视界面，您可以创建并运行一系列检查点和事件驱动的工作流，以维护应用程序状态。 每一步的输出作为下一步的输入。应用程序中的各个步骤根据业务逻辑定义的顺序执行。</p>
+<p>编排一系列无服务器应用程序、管理重试和调试故障可能颇具挑战性。随着分布式应用程序变得越来越复杂，管理它们的复杂性也随之增加。Step Functions 可自动管理错误处理、重试逻辑和状态。 凭借内置的操作控制功能，Step Functions 可以管理执行任务的顺序、错误处理、重试逻辑和状态，从而显著减轻团队的运营负担。</p>
+<h2 id="Amazon-Cognito"><a href="#Amazon-Cognito" class="headerlink" title="Amazon Cognito"></a>Amazon Cognito</h2><p>简单安全的用户注册、登录和访问控制<br>借助 Amazon Cognito，您可以快速轻松地为 Web 和移动应用程序添加用户注册/登录和访问控制功能。Amazon Cognito 可将用户规模扩展到数百万，并支持通过 SAML 2.0 使用社交身份提供商 (如 Facebook、Google 和 Amazon) 以及企业身份提供商进行登录。</p>
+<ul>
+<li>SAML:全断言标记语言（英语：Security Assertion Markup Language，简称SAML，发音sam-el）是一个基于XML的开源标准数据格式，它在当事方之间交换身份验证和授权数据，尤其是在身份提供者和服务提供者之间交换。</li>
+</ul>
+<h2 id="AWS-Elastic-Beanstalk"><a href="#AWS-Elastic-Beanstalk" class="headerlink" title="AWS Elastic Beanstalk"></a>AWS Elastic Beanstalk</h2><p>AWS Elastic Beanstalk 是一项易于使用的服务，用于在熟悉的服务器（例如 Apache 、Nginx、Passenger 和 IIS ）上部署和扩展使用 Java、.NET、PHP、Node.js、Python、Ruby、GO 和 Docker 开发的 Web 应用程序和服务。</p>
+<p>您只需上传代码，Elastic Beanstalk 即可自动处理包括<strong>容量预配置、负载均衡、自动扩展和应用程序运行状况监控</strong>在内的部署工作。同时，您能够完全控制为应用程序提供支持的 AWS 资源，并可以随时访问底层资源。</p>
+<p>Elastic Beanstalk 不额外收费 – 您只需为存储和运行应用程序所需的 AWS 资源付费。</p>
+<h2 id="Amazon-AppStream-2-0"><a href="#Amazon-AppStream-2-0" class="headerlink" title="Amazon AppStream 2.0"></a>Amazon AppStream 2.0</h2><p>Amazon AppStream 2.0 是一种完全托管的非永久性应用程序和桌面流式传输服务。您可以在 AppStream 2.0 上集中管理桌面应用程序，并将它们安全地交付到任何计算机上。您可以轻松扩展到全球任意数量的用户，而无需获取、预置和操作硬件或基础设施。AppStream 2.0 基于 AWS 构建，因此您可以从专为对安全最敏感的组织设计的数据中心和网络架构中受益。 每个最终用户都可以获得流畅的响应式体验，因为您的应用程序在针对特定使用案例优化的虚拟机上运行，并且每个流式传输会话都会根据网络条件自动调整。</p>
+<ul>
+<li>将桌面应用程序交付给任何计算机</li>
+<li>AppStream 2.0 通过在云中安全运行桌面应用程序并向您的用户提供每个应用程序的同一版本，简化了应用程序交付</li>
+</ul>
+<h2 id="AWS-Key-Management-Service-KMS"><a href="#AWS-Key-Management-Service-KMS" class="headerlink" title="AWS Key Management Service (KMS)"></a>AWS Key Management Service (KMS)</h2><p>AWS Key Management Service (KMS) 可让您轻松创建和管理加密密钥，并控制其在各种 AWS 服务和应用程序中的使用。AWS KMS 是一种安全且有弹性的服务，它使用已经过 FIPS 140-2 验证或正在验证的硬件安全模块来保护您的密钥。AWS KMS 还能与 AWS CloudTrail 集成，从而为您提供所有密钥的使用记录，帮助您满足监管和合规性要求。</p>
+<ul>
+<li>您可以从 AWS 管理控制台或使用 AWS SDK 或 CLI 轻松创建、导入、轮换、删除和管理密钥权限。</li>
+<li>AWS KMS 与 AWS 服务集成，可简化密钥使用以加密 AWS 工作负载中的数据。</li>
+<li>KMS 会将密钥的所有使用记录到 AWS CloudTrail，以便为您提供访问加密数据的用户的独立视图，包括代表您使用这些数据的 AWS 服务。AWS KMS 与 AWS CloudTrail 集成，可记录所有 API 请求，包括密钥管理操作和密钥使用情况。</li>
+</ul>
+<h2 id="AWS-CloudHSM"><a href="#AWS-CloudHSM" class="headerlink" title="AWS CloudHSM"></a>AWS CloudHSM</h2><p>AWS CloudHSM 是基于云的硬件安全模块 (HSM)，让您能够在 AWS 云上轻松生成和使用自己的加密密钥。借助 CloudHSM，您可以使用经过 FIPS 140-2 第 3 级验证的 HSM 管理自己的加密密钥。CloudHSM 让您可以灵活选择使用行业标准的 API 与应用程序集成，这些 API 包括 PKCS#11、Java 加密扩展 (JCE) 和 Microsoft CryptoNG (CNG) 库等。</p>
+<ul>
+<li>HSM 可满足的安全级别更高，支持的协议更多，还支持非对称加密， KMS只支持对称加密</li>
+<li>KMS 是多租户的密钥管理服务    HSM是单租户的密钥管理服务（租的是独立物理加密机）</li>
+</ul>
+<h2 id="Amazon-CloudWatch"><a href="#Amazon-CloudWatch" class="headerlink" title="Amazon CloudWatch"></a>Amazon CloudWatch</h2><p>利用 Amazon CloudWatch 警报操作，您可创建自动停止、终止、重启或恢复实例的警报。<br>Amazon CloudWatch 是一种面向开发运营工程师、开发人员、站点可靠性工程师 (SRE) 和 IT 经理的监控和可观测性服务。CloudWatch 为您提供相关数据和切实见解，以监控应用程序、响应系统范围的性能变化、优化资源利用率，并在统一视图中查看运营状况。CloudWatch 以日志、指标和事件的形式收集监控和运营数据，让您能够在统一查看在 AWS 和本地服务器上运行的资源、应用程序和服务。您可以使用 CloudWatch 检测环境中的异常行为、设置警报、并排显示日志和指标、执行自动化操作、排查问题，以及发现可确保应用程序正常运行的见解。</p>
+<ul>
+<li>将其与 AWS X-Ray 的跟踪数据相结合，以实现端到端的可观测性。</li>
+<li>CloudWatch 警报会根据您指定的阈值或 CloudWatch 使用机器学习模型为您创建的阈值来监控您的指标值，从而检测异常行为。如果触发警报，CloudWatch 可以自动采取措施启用 Amazon EC2 Auto Scaling 或停止实例，以便您自动执行容量和资源规划。</li>
+<li>了解、分析并可视化日志，以解决运营问题并提高应用程序性能。</li>
+</ul>
+<h2 id="Amazon-Route-53"><a href="#Amazon-Route-53" class="headerlink" title="Amazon Route 53"></a>Amazon Route 53</h2><p>Amazon Route 53 是一种可用性高、可扩展性强的云域名系统 (DNS) Web 服务。Amazon Route 53 也与 IPv6 完全兼容。Amazon Route 53 高效地将用户请求连接到 AWS 中运行的基础设施，例如 Amazon EC2 实例、Elastic Load Balancing 负载均衡器或 Amazon S3 存储桶，还可以将用户路由到 AWS 外部的基础设施。您可以使用 Amazon Route 53 配置 DNS 运行状况检查以将流量路由到正常的终端节点，或者独立监控应用程序及其终端节点的运行状况。Amazon Route 53 Traffic Flow 让您可以通过多种路由类型（包括基于延迟的路由、Geo DNS、临近地理位置路由和加权轮询）轻松管理全球流量，所有的路由类型都可与 DNS 故障转移进行组合，以实现各种低延迟容错架构。利用 Amazon Route 53 Traffic Flow 简单的可视化编辑器，您可以轻松管理如何将终端用户路由到应用程序的终端节点，无论是在单个 AWS 区域还是在分布于全球的区域都可实现。Amazon Route 53 还提供域名注册功能，您可以购买和管理域名（例如 example.com），且 Amazon Route 53 将自动为您的域配置 DNS 设置。</p>
+<h2 id="Elastic-Load-Balancing-ELB"><a href="#Elastic-Load-Balancing-ELB" class="headerlink" title="Elastic Load Balancing(ELB)"></a>Elastic Load Balancing(ELB)</h2><p>Elastic Load Balancing 在多个目标（如 Amazon EC2 实例、容器、IP 地址和 Lambda 函数）之间自动分配传入的应用程序流量。它可以在单个可用区内处理不断变化的应用程序流量负载，也可以跨多个可用区处理此类负载。Elastic Load Balancing 提供三种负载均衡器，它们均能实现高可用性、自动扩展和可靠的安全性，因此能让您的应用程序获得容错能力。</p>
+<ul>
+<li>Application Load Balancer(ALB)Application Load Balancer 最适合 HTTP 和 HTTPS 流量的负载均衡，面向交付包括微服务和容器在内的现代应用程序架构，提供高级请求路由功能。Application Load Balancer 运行于单独的请求级别（第 7 层），可根据请求的内容将流量路由至 Amazon Virtual Private Cloud (Amazon VPC) 内的不同目标。</li>
+<li>网络负载均衡器(NLB):若要对需要极高性能的传输控制协议 (TCP)、用户数据报协议 (UDP) 和传输层安全性 (TLS) 协议流量进行负载均衡，最适合使用网络负载均衡器。</li>
+<li>Classic Load Balancer:Classic Load Balancer 同时运行于请求级别和连接级别，可在多个 Amazon EC2 实例之间提供基本的负载均衡。</li>
+<li></li>
+<li>提高应用程序的容错能力</li>
+<li>自动扩展应用程序  Auto Scaling</li>
+<li>混合负载均衡和 Elastic Load Balancing</li>
+<li>通过 HTTP(S) 调用 Lambda 函数</li>
+</ul>
+<h2 id="Amazon-ElastiCache"><a href="#Amazon-ElastiCache" class="headerlink" title="Amazon ElastiCache"></a>Amazon ElastiCache</h2><p>与 Redis 或 Memcached 兼容的完全托管型内存中数据存储。支持实时应用程序，提供亚毫秒级延迟。<br>Amazon ElastiCache 支持横向扩展、缩减及纵向扩展，可满足不断变化的应用需求。可通过分区实现写入扩展和内存扩展。Replicas 提供读取扩展功能。</p>
+<h2 id="AWS-Schema-Conversion-Tool-AWS-SCT"><a href="#AWS-Schema-Conversion-Tool-AWS-SCT" class="headerlink" title="AWS Schema Conversion Tool (AWS SCT)"></a>AWS Schema Conversion Tool (AWS SCT)</h2><p>使用 AWS Schema Conversion Tool (AWS SCT) 将 Oracle 架构转换为 Aurora MySQL 架构</p>
+<h2 id="AWS-Application-Discovery-Service"><a href="#AWS-Application-Discovery-Service" class="headerlink" title="AWS Application Discovery Service"></a>AWS Application Discovery Service</h2><p>AWS Application Discovery Service 可以收集有关企业客户的本地数据中心的信息，从而帮助企业客户规划迁移项目。</p>
+<p>数据中心迁移的规划工作可能会涉及数千个通常高度相互依赖的工作负载。确定服务器利用率数据和依赖关系映射是迁移流程中的一个重要前期步骤。AWS Application Discovery Service 可以收集和提供服务器的配置、使用和行为数据，帮助您更好地了解您的工作负载。</p>
+<p>收集的数据以加密格式保留在 AWS Application Discovery Service 的数据存储中。您可以将该数据导出为 CSV 文件，利用其来估算在 AWS 上运行的总体拥有成本 (TCO) 并规划向 AWS 的迁移工作。此外，该数据还保留在 AWS Migration Hub 中，您可以在其中迁移发现的服务器并跟踪其迁移到 AWS 的进度。</p>
+<h2 id="AWS-Server-Migration-Service-SMS"><a href="#AWS-Server-Migration-Service-SMS" class="headerlink" title="AWS Server Migration Service (SMS)"></a>AWS Server Migration Service (SMS)</h2><p>是一种无代理服务，可以让您更加轻松快速地将成千上万的本地工作负载迁移到 AWS。借助 AWS SMS，您可以自动执行实时服务器卷的增量复制、对其制定计划以及进行跟踪，从而能够更轻松地协调大规模服务器迁移。</p>
+<h2 id="AWS-CloudFormation"><a href="#AWS-CloudFormation" class="headerlink" title="AWS CloudFormation"></a>AWS CloudFormation</h2><p>AWS CloudFormation 通过将基础设施视为代码，为您提供一种简单的方式，为一系列相关 AWS 资源和第三方资源建模，快速而又一致地对这些资源进行预置并在它们的整个生命周期内对其进行管理。CloudFormation 模板描述了您所需的资源及其依赖项，这样，您就可以将它们一起作为一个堆栈进行启动和配置。</p>
+<ul>
+<li>AWS CloudFormation 现在支持上调对五个服务配额的限制</li>
+</ul>
+<h2 id="AWS-Auto-Scaling"><a href="#AWS-Auto-Scaling" class="headerlink" title="AWS Auto Scaling"></a>AWS Auto Scaling</h2><p>AWS Auto Scaling 可以监控您的应用程序并自动调整容量，从而以尽可能低的成本来保持稳定、可预测的性能。使用 AWS Auto Scaling，您可以在几分钟内为多项服务中的多个资源轻松设置应用程序扩展。该服务可以提供一个简单而功能强大的用户界面，让您可以为 Amazon EC2 实例和 Spot 队列、Amazon ECS 任务、Amazon DynamoDB 表和索引以及 Amazon Aurora 副本等资源制定扩展计划。AWS Auto Scaling 可以提供建议，让您能够优化性能、成本或实现二者的平衡，从而使扩展变得简单。如果您已经在使用 Amazon EC2 Auto Scaling 来动态扩展 Amazon EC2 实例，那么现在可以将其与 AWS Auto Scaling 结合使用，为其他 AWS 服务扩展其他资源。有了 AWS Auto Scaling，您的应用程序就始终能在合适的时间获得合适的资源。</p>
+<h2 id="AWS-Batch"><a href="#AWS-Batch" class="headerlink" title="AWS Batch"></a>AWS Batch</h2><p>AWS Batch 让开发人员、科学家和工程师能够轻松高效地在 AWS 上运行成千上万个批处理计算作业。AWS Batch 可根据提交的批处理作业的卷和特定资源需求动态预置最佳的计算资源（如 CPU 或内存优化实例）数量和类型。借助 AWS Batch，您无需安装和管理运行您的作业所使用的批处理计算软件或服务器集群，从而使您能够专注于分析结果和解决问题。AWS Batch 将通过全系列的 AWS 计算服务和功能（如 Amazon EC2 和 Spot 实例）计划、安排和执行批量计算工作负载。</p>
+<p>AWS Batch 无需额外付费。您只需为存储和运行您的批处理作业而创建的 AWS 资源（如 EC2 实例）付费。</p>
+<h2 id="AWS-X-Ray"><a href="#AWS-X-Ray" class="headerlink" title="AWS X-Ray"></a>AWS X-Ray</h2><p>AWS X-Ray 可以帮助开发人员分析与调试分布式生产应用程序，例如使用微服务架构构建的应用程序。借助 X-Ray，您可以了解应用程序及其底层服务的执行方式，从而识别和排查导致性能问题和错误的根本原因。X-Ray 可在请求通过应用程序时提供请求的端到端视图，并展示应用程序底层组件的映射。您可以使用 X-Ray 分析开发和生产中的应用程序，从简单的三层应用程序到包含上千种服务的复杂微服务应用程序。</p>
+<h2 id="AWS-Glue"><a href="#AWS-Glue" class="headerlink" title="AWS Glue"></a>AWS Glue</h2><p>AWS Glue 是完全托管的提取、转换和加载 (ETL) 服务，有了它，您可以轻松地准备并加载数据以进行分析。您只需在 AWS Glue 可视化编辑器中单击几次，即可创建并运行 ETL 作业。您只需将 AWS Glue 指向存储在 AWS 上的数据或兼容 JDBC 的源，AWS Glue 便会发现您的数据，并将关联的元数据（例如表定义和架构）存储到 AWS Glue 数据目录中。存入目录后，您的数据可立即供 ETL 搜索、查询和使用。</p>
+<h2 id="Amazon-EMR"><a href="#Amazon-EMR" class="headerlink" title="Amazon EMR"></a>Amazon EMR</h2><p>Amazon EMR 是行业领先的云大数据平台，可使用多种开放源代码工具处理大量数据，例如 Apache Spark、Apache Hive、Apache HBase、Apache Flink、Apache Hudi 和 Presto。借助 EMR，您可以用不到传统本地解决方案一半的成本运行 PB 级分析，并且其速度比标准 Apache Spark 快 3 倍以上。对于短期运行的作业，您可以启动和关闭集群，并对使用的实例按秒支付费用。对于长期运行的工作负载，您可以创建能自动扩展的高度可用的集群以满足需求。如果您拥有 Apache Spark 和 Apache Hive 等开源工具的现有本地部署，您还可以在 AWS Outposts 上运行 EMR 集群。</p>
+<h2 id="AWS-Fargate"><a href="#AWS-Fargate" class="headerlink" title="AWS Fargate"></a>AWS Fargate</h2><p>AWS Fargate 是一种适用于容器的无服务器计算引擎，可与 Amazon Elastic Container Service (ECS) 和 Amazon Elastic Kubernetes Service (EKS) 一起使用。Fargate 使您可以轻松专注于构建应用程序。使用 Fargate，您无需预置和管理服务器，而且可以为每个应用程序指定资源并为其付费，并通过设计隔离应用程序来提高安全性。</p>
+<h2 id="Spot-Fleet-API"><a href="#Spot-Fleet-API" class="headerlink" title="Spot Fleet API"></a>Spot Fleet API</h2><p>简单来说，通过这个API，用户不再需要关注每个竞价实例的具体竞价策略，转向关注自己业务需要的计算量、完成时间以及成本，而具体竞价实例的组合搭配则由AWS在后台根据当前竞价实例价格智能帮助用户选择。</p>
+<h2 id="AWS-CodeBuild"><a href="#AWS-CodeBuild" class="headerlink" title="AWS CodeBuild"></a>AWS CodeBuild</h2><p>AWS CodeBuild 是一项完全托管的持续集成服务，可编译源代码、运行测试以及生成可供部署的软件包。使用 CodeBuild，您无需预置、管理和扩展自己的构建服务器。CodeBuild 可以持续扩展并同时处理多项构建任务，因此您的构建任务不会在队列中等待。您可以使用预先打包的构建环境快速开始，也可以创建使用您自己的构建工具的自定义构建环境。使用 CodeBuild，将按使用计算资源的分钟数向您收取费用。</p>
+<ul>
+<li>AWS CodeBuild 属于 AWS Code 服务系列，您可以使用该服务创建完整、自动的软件发布工作流程，以实现持续集成和持续交付 (CI/CD)。</li>
+<li>借助 AWS CodeBuild，您的构建项目可使用由 AWS Key Management Service (KMS) 托管的客户专用密钥加密。CodeBuild 与 AWS Identity and Access Management (IAM) 集成，因此您可以为特定用户分配构建项目权限。</li>
+<li><h2 id="AWS-CodeDeploy"><a href="#AWS-CodeDeploy" class="headerlink" title="AWS CodeDeploy"></a>AWS CodeDeploy</h2>AWS CodeDeploy 是一项将软件自动部署到各种计算服务（例如 Amazon EC2、AWS Fargate、AWS Lambda 和本地服务器）的完全托管的部署服务。借助 AWS CodeDeploy，您可以更轻松地快速发布新功能，避免在应用程序部署过程中出现停机，并简化应用程序的更新工作。您可以使用 AWS CodeDeploy 自动执行软件部署，而无需执行容易出错的手动操作。服务根据您的部署需求进行扩展。</li>
+</ul>
+<h2 id="AWS-CodePipeline"><a href="#AWS-CodePipeline" class="headerlink" title="AWS CodePipeline"></a>AWS CodePipeline</h2><p>AWS CodePipeline 是一种完全托管的持续集成与持续交付服务，可以帮助您实现发布管道的自动化，从而实现快速而可靠的应用程序和基础设施更新。代码一旦发生更改，CodePipeline 都会根据您定义的发布模型自动构建、测试和部署您的发布流程。这使您能够快速而可靠地提供各种功能和更新。您可以将 AWS CodePipeline 与 GitHub 等第三方服务或您自己的自定义插件轻松集成。</p>
+<h2 id="Amazon-Athena"><a href="#Amazon-Athena" class="headerlink" title="Amazon Athena"></a>Amazon Athena</h2><p>Amazon Athena 是一种交互式查询服务，让您能够轻松使用标准 SQL 分析 Amazon S3 中的数据。Athena 没有服务器，因此您无需管理任何基础设施，且只需为您运行的查询付费。</p>
+<p>Athena 可与 AWS Glue 数据目录进行开箱即用集成，让您能够跨各种服务创建统一的元数据存储库、抓取数据源以发现架构并使用新的和修改后的表与分区定义填充数据目录，以及维护架构版本控制。</p>
+<h2 id="VPC终端节点-VPC-Endpoint"><a href="#VPC终端节点-VPC-Endpoint" class="headerlink" title="VPC终端节点(VPC Endpoint)"></a>VPC终端节点(VPC Endpoint)</h2><p>VPC 终端节点 使您能够将 VPC 私密地连接到支持的 AWS 服务和 VPC 终端节点服务（由 AWS PrivateLink 提供支持），而无需互联网网关、NAT 设备、VPN 连接或 AWS Direct Connect 连接。VPC 中的实例无需公有 IP 地址便可与服务中的资源通信。VPC 和其他服务之间的通信不会离开 Amazon 网络。</p>
+<p>终端节点是虚拟设备。它们是水平扩展、冗余和高度可用的 VPC 组件。通过它们，可以在 VPC 中的实例与服务之间进行通信，而不会对网络通信带来可用性风险或带宽约束。<br>VPC 终端节点有两种类型：接口终端节点 和 网关终端节点。创建受支持的服务所需要的 VPC 终端节点 类型。</p>
+<p>接口终端节点是一个弹性网络接口，具有来自子网 IP 地址范围的私有 IP 地址，用作发送到受支持的服务的通信的入口点。接口终端节点由 AWS PrivateLink 提供支持，您可以使用该技术通过私有 IP 地址私密访问服务。AWS PrivateLink 限制您的 VPC 和服务之间的所有网络流量到达 Amazon 网络。您无需互联网网关、NAT 设备或虚拟私有网关。</p>
+<h2 id="AWS-Systems-Manager"><a href="#AWS-Systems-Manager" class="headerlink" title="AWS Systems Manager"></a>AWS Systems Manager</h2><p>AWS Systems Manager 让您能够查看和控制 AWS 上的基础设施。Systems Manager 可以提供一个统一的用户界面，供您查看多种 AWS 服务的运行数据，并在 AWS 资源上自动执行操作任务。借助 Systems Manager，您可以按应用程序对 Amazon EC2 实例、Amazon S3 存储桶或 Amazon RDS 实例等资源进行分组、查看运行数据以便进行监控和故障排除，并对各组资源采取行动。Systems Manager 可以简化资源和应用程序管理、缩短检测和解决运行问题的时间，并让您轻松安全地大规模运行和管理基础设施。</p>
+<h2 id="AWS-Global-Accelerator"><a href="#AWS-Global-Accelerator" class="headerlink" title="AWS Global Accelerator"></a>AWS Global Accelerator</h2><p>AWS Global Accelerator 是通过 Amazon Web Service 的全球网络基础设施发送您的用户流量的联网服务，将您的互联网用户性能提升了高达 60%。当互联网拥塞时，Global Accelerator 的自动路由优化会帮助您将数据包丢失、抖动和延迟水平持续维持在低水平。</p>
+<p>凭借 Global Accelerator，您可获得两个面向客户的全球静态 IP，以简化流量管理。在后端，增加或删除您的 AWS 应用程序源，如 Network Load Balancers、Application Load Balancers、弹性 IP 和 EC2 实例，无需作出面向用户的更改。为减少终端节点故障，Global Accelerator 自动将您的流量重新路由至您最近的正常运行的可用终端节点。</p>
+<h2 id="Amazon-Macie"><a href="#Amazon-Macie" class="headerlink" title="Amazon Macie"></a>Amazon Macie</h2><p>Amazon Macie 是一项完全托管的数据安全和数据隐私服务，它利用机器学习和模式匹配来发现和保护 AWS 中的敏感数据。<br>Amazon Macie 使用机器学习和模式匹配来经济高效地大规模发现敏感数据。Macie 会自动检测大量不断增多的敏感数据类型，包括姓名、地址和信用卡号等个人身份信息 (PII)。</p>
+<h2 id="AWS-Organizations"><a href="#AWS-Organizations" class="headerlink" title="AWS Organizations"></a>AWS Organizations</h2><p>AWS Organizations 可帮助您在增长和扩展 AWS 资源时集中管理和治理您的环境。使用 AWS Organizations，您可以以编程方式创建新的 AWS 账户和分配资源、将账户分组以组织您的工作流程、应用策略到账户或组中进行治理，并通过为所有账户使用一种付款方式来简化计费。</p>
+<p>另外，AWS Organizations 与其他 AWS 服务进行了集成，以便在您的组织中跨账户指定中央配置、安全机制、审计要求和资源共享。所有 AWS 客户都可以使用 AWS Organizations，且无需额外付费。</p>
+<p>通过将账户组织到组织单位 (OU)（提供应用程序或服务的账户组）中，您可以应用服务控制策略 (SCP) 以为您的 OU 创建目标治理边界。</p>
+<p>使用 AWS Single Sign-On (SSO) 和活动目录为组织中的所有人进行简单的基于用户的权限管理。通过为作业类别创建自定义权限来应用最小特权实践。您还可以通过向用户、账户或 OU 应用服务控制策略 (SCP) 来控制对 AWS 服务的访问权。</p>
+<h2 id="SCP"><a href="#SCP" class="headerlink" title="SCP"></a>SCP</h2><p>默认情况下，用户没有任何类型的权限。所有权限都必须通过策略明确授予。如果未明确授予某个权限，则默示拒绝该权限。如果明确拒绝了某个权限，则其优于任何其他可能允许该权限的策略。换而言之，用户仅具有明确授予和未明确拒绝的权限。</p>
+<h2 id="安全组"><a href="#安全组" class="headerlink" title="安全组"></a>安全组</h2><p>您可以指定允许规则，但不可指定拒绝规则。<br>当您创建一个安全组时，它没有入站规则。因此，在您向安全组添加入站规则之前，不允许来自另一台主机的入站流量传输到您的实例。</p>
+<h2 id="网络-ACL"><a href="#网络-ACL" class="headerlink" title="网络 ACL"></a>网络 ACL</h2><p>您的 VPC 中的每个子网都必须与一个网络 ACL 相关联。如果您没有明确地将子网与网络 ACL 相关联，则子网将自动与默认网络 ACL 关联。默认情况下，每个自定义网络 ACL 都拒绝所有入站和出站流量，直至您添加规则。</p>
+<p>您可以将网络 ACL 与多个子网关联。但是，一个子网一次只能与一个网络 ACL 关联。当您将一个网络 ACL 与一个子网关联时，将删除之前的关联。</p>
+<h2 id="AWS-Service-Catalog"><a href="#AWS-Service-Catalog" class="headerlink" title="AWS Service Catalog"></a>AWS Service Catalog</h2><p>利用 AWS Service Catalog，组织可以创建和管理已批准在 AWS 上使用的 IT 服务的目录。这些 IT 服务可谓包罗万象，从虚拟机映像、服务器、软件和数据库，再到完整的多层应用程序架构。AWS Service Catalog 使您可以集中管理普遍部署的 IT 服务，帮助您实现一致性管理并满足您的合规性要求，同时使用户能够仅快速部署所需的已批准 IT 服务。</p>
+<h2 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h2><p>Kibana 是一种开源数据可视化和挖掘工具，可以用于日志和时间序列分析、应用程序监控和运营智能使用案例。它提供了强大且易用的功能，例如直方图、线形图、饼图、热图和内置的地理空间支持。此外，它还提供了与 Elasticsearch 的紧密集成，后者是一款流行的分析和搜索引擎，这使得 Kibana 成为了可视化 Elasticsearch 中存储数据的默认之选。</p>
+<h2 id="Amazon-Inspector"><a href="#Amazon-Inspector" class="headerlink" title="Amazon Inspector"></a>Amazon Inspector</h2><p>Amazon Inspector 是一项自动安全评估服务，有助于提高在 AWS 上部署的应用程序的安全性与合规性。Amazon Inspector 会自动评估应用程序的风险、漏洞或者相较于最佳实践的偏差。执行评估后，Amazon Inspector 会生成按严重程度确定优先级的安全检测详细列表。这些评估结果可直接接受审核，也可作为通过 Amazon Inspector 控制台或 API 提供的详细评估报告的一部分接受审核。</p>
+<p>Amazon Inspector 安全评估可帮助您检查 Amazon EC2 实例是否存在意外的网络可访问性和漏洞。Amazon Inspector 评估以预定义规则包（映射到常见安全最佳实践和漏洞定义）的形式提供给您。内置规则的示例包括检查从 Internet 对您的 EC2 实例进行的访问、当前启用的远程根登录，或已安装的易受攻击的软件版本。AWS 安全研究员会定期更新这些规则。</p>
+<h2 id="Amazon-GuardDuty"><a href="#Amazon-GuardDuty" class="headerlink" title="Amazon GuardDuty"></a>Amazon GuardDuty</h2><p>提供智能威胁检测和持续监控，保护您的 AWS 账户、工作负载和数据<br>Amazon GuardDuty 是一种威胁检测服务，可持续监控恶意活动和未经授权的行为，从而保护您的 AWS 账户、工作负载和在 Amazon S3 中存储的数据。迁移到云后，账户和网络活动的收集与聚合变得异常简单，但安全团队对事件日志数据进行持续的分析以发现潜在的威胁，则可能十分耗时。GuardDuty 为您提供了经济高效的智能选项，从而持续检测在 AWS 中发生的威胁。此服务使用机器学习、异常检测和集成威胁情报等手段，识别潜在的威胁并确定优先级别。GuardDuty 对来自多个 AWS 数据源（例如 AWS CloudTrail 事件日志、Amazon VPC 流日志和 DNS 日志）的数百亿事件进行分析。只需在 AWS 管理控制台中几次点击，就可以启用 GuardDuty，无需部署或维护任何软件或硬件。GuardDuty 警报与 Amazon CloudWatch Events 集成，具有极好的可行动性，非常便于跨多个账户聚合，并且可以直接推送到现有的事件管理和工作流程系统。</p>
+<h2 id="Amazon-EventBridge"><a href="#Amazon-EventBridge" class="headerlink" title="Amazon EventBridge"></a>Amazon EventBridge</h2><p>EventBridge 架构注册表会将事件架构存储在注册表中，以方便组织中的其他开发人员搜索和访问，而无需手动查找事件及其结构。该注册表还允许您在 IDE 中直接生成 Java、Python 或 Typescript 等编程语言的代码绑定，从而在代码中以对象形式使用这些事件。启用事件总线的 Schema 发现功能之后，系统将会自动发现 Schema 事件并将其添加至注册表中，而无需手动创建事件 Schema。所有 AWS 服务 Schema 会自动显示在您的 Schema 注册表中，而当您启用 SaaS 合作伙伴事件总线的 Schema 发现功能后，将会看到集成 SaaS 应用程序的 Schema。<br>完全托管且可扩展的事件总线<br>Amazon EventBridge 与超过 90 个事件源以及超过 15 个目标直接集成，其中包括 AWS Lambda、Amazon SQS、Amazon SNS、AWS Step Functions、Amazon Kinesis Data Streams、Amazon Kinesis Data Firehose 等等，此外还有其他已在计划中的来源和目标。所有 AWS 服务中的所有更改类 API 调用（即，除 Describe<em>、List</em> 和 Get* 之外的所有调用）都通过 AWS CloudTrail 生成事件。</p>
+<h2 id="AWS-IoT-Greengrass"><a href="#AWS-IoT-Greengrass" class="headerlink" title="AWS IoT Greengrass"></a>AWS IoT Greengrass</h2><p>将本地计算、消息收发、数据管理、同步和 ML 推理功能引入边缘设备</p>
+<h2 id="Amazon-Simple-Notification-Service"><a href="#Amazon-Simple-Notification-Service" class="headerlink" title="Amazon Simple Notification Service"></a>Amazon Simple Notification Service</h2><p>完全托管的发布/订阅消息收发、SMS、电子邮件和移动推送通知<br>借助 Amazon SNS 主题，发布系统可以向大量订阅系统（包括 Amazon SQS 队列、AWS Lambda 函数和 HTTP/S 终端节点）扇出消息，从而实现并行处理。使用 A2P 功能，您可以通过 SMS、移动推送和电子邮件将消息大规模发送给用户。</p>
+<h2 id="Amazon-Redshift"><a href="#Amazon-Redshift" class="headerlink" title="Amazon Redshift"></a>Amazon Redshift</h2><p>任何其他数据仓库都无法像它这样轻松地从所有数据中获得新见解。借助 Redshift，您可以使用标准 SQL 在数据仓库、运营数据库和数据湖中查询 PB 级结构化和半结构化数据。Redshift 使您能够使用开放格式（如 Apache Parquet）轻松地将查询结果保存回 S3 数据湖，以便在其他分析服务（如 Amazon EMR、Amazon Athena 和 Amazon SageMaker）中进一步分析。</p>
+<h2 id="AWS-AppSync"><a href="#AWS-AppSync" class="headerlink" title="AWS AppSync"></a>AWS AppSync</h2><p>借助可扩展的 GraphQL API 加快应用程序开发速度</p>
+<p>组织选择使用 GraphQL 构建 API 的原因是，GraphQL 可以通过使得前端开发人员能够查询多个数据库、微服务和具有单个 GraphQL 终端节点的 API 来帮助他们更快地开发应用程序。</p>
+<p>AWS AppSync 是一项完全托管的服务，通过处理与 AWS DynamoDB、Lambda 等数据源之间繁重的安全连接任务来简化 GraphQL API 的开发。添加缓存以提高性能、订阅以支持实时更新以及客户端数据存储以使离线客户端保持同步等操作也一样轻松简单。部署之后，AWS AppSync 会自动向上扩展和缩减 GraphQL API 执行引擎以满足 API 请求量。</p>
+<h2 id="OAI-源访问身份"><a href="#OAI-源访问身份" class="headerlink" title="OAI 源访问身份"></a>OAI 源访问身份</h2><h2 id="AWS-Certificate-Manager"><a href="#AWS-Certificate-Manager" class="headerlink" title="AWS Certificate Manager"></a>AWS Certificate Manager</h2><p>轻松预置、管理和部署公有和私有 SSL/TLS 证书，以便用于 AWS 服务和您的内部互联资源</p>
+<p>利用 AWS Certificate Manager，您可以快速请求证书，在与 ACM 集成的 AWS 资源（例如 Elastic Load Balancer、Amazon CloudFront 分配和 API Gateway 上的 API）上部署该证书，并让 AWS Certificate Manager 处理证书续订事宜。它还让您能够为内部资源创建私有证书并集中管理证书生命周期。通过 AWS Certificate Manager 预置的用于 ACM 集成服务的公有和私有证书均免费。您只需为您创建的用于运行应用程序的 AWS 资源付费。</p>
+<h2 id="AWS-Directory-Service"><a href="#AWS-Directory-Service" class="headerlink" title="AWS Directory Service"></a>AWS Directory Service</h2><p>适用于 Microsoft Active Directory 的 AWS Directory Service 又称为 AWS Managed Microsoft Active Directory (AD)，可以支持目录感知型工作负载和各种 AWS 资源，以在 AWS 中使用托管的 Active Directory (AD)。AWS Managed Microsoft AD 基于实际的 Microsoft AD 构建，不需要您将数据从现有 Active Directory 同步或复制到云中。您可以使用标准的 AD 管理工具，还可利用各种内置的 AD 功能，例如组策略和单点登录。借助 AWS Managed Microsoft AD，您可以将 Amazon EC2 和 Amazon RDS for SQL Server 实例轻松加入到域中，并使用 Amazon WorkSpaces 等 AWS 最终用户计算 (EUC) 服务以及 AD 用户和组。</p>
+<h2 id="AWS-WAF-–-Web-应用程序防火墙"><a href="#AWS-WAF-–-Web-应用程序防火墙" class="headerlink" title="AWS WAF – Web 应用程序防火墙"></a>AWS WAF – Web 应用程序防火墙</h2><p>AWS WAF 是一种 Web 应用程序防火墙，可帮助保护您的 Web 应用程序或 API 免遭常见 Web 漏洞的攻击，这些漏洞可能会影响可用性、损害安全性或消耗过多的资源。AWS WAF 允许您创建防范常见攻击模式（例如 SQL 注入或跨站点脚本）的安全规则，以及滤除您定义的特定流量模式的规则，从而让您可以控制流量到达您的应用程序的方式。您可以通过适用于 AWS WAF 的托管规则快速入门，这是由 AWS 或 AWS Marketplace 卖家托管的一套预配置规则。适用于 WAF 的托管规则可以解决 OWASP 十大安全风险等问题。这些规则会随新问题的出现定期更新。AWS WAF 包含功能全面的 API，借此您可以让安全规则的创建、部署和维护实现自动化。</p>
+<p>使用 AWS WAF，您只需按使用量付费。定价基于您部署的规则数量和您的应用程序收到的 Web 请求数量。无需预先承诺。</p>
+<p>您可以将 AWS WAF 作为 CDN 解决方案的一部分部署到 Amazon CloudFront 上，也可以将其部署到位于 Web 服务器或来源服务器（运行于 EC2 上）之前的 Application Load Balancer 上，或者是适用于您的 API 的 Amazon API Gateway 上。</p>
+<h2 id="Amazon-API-Gateway"><a href="#Amazon-API-Gateway" class="headerlink" title="Amazon API Gateway"></a>Amazon API Gateway</h2><p>创建、维护和保护任意规模的 API</p>
+<h2 id="AWS-Batch-1"><a href="#AWS-Batch-1" class="headerlink" title="AWS Batch"></a>AWS Batch</h2><p>AWS Batch 让开发人员、科学家和工程师能够轻松高效地在 AWS 上运行成千上万个批处理计算作业。AWS Batch 可根据提交的批处理作业的卷和特定资源需求动态预置最佳的计算资源（如 CPU 或内存优化实例）数量和类型。借助 AWS Batch，您无需安装和管理运行您的作业所使用的批处理计算软件或服务器集群，从而使您能够专注于分析结果和解决问题。AWS Batch 将通过全系列的 AWS 计算服务和功能（如 Amazon EC2 和 Spot 实例）计划、安排和执行批量计算工作负载。</p>
+<h2 id="AWS-Cost-Explorer"><a href="#AWS-Cost-Explorer" class="headerlink" title="AWS Cost Explorer"></a>AWS Cost Explorer</h2><p>界面易于使用，可让您直观看到、理解和管理随时间变化的 AWS 成本和使用情况。</p>
+<p>通过创建分析成本和使用情况数据的自定义报告，快速入门。高水平分析数据（例如，所有账户的总成本和使用情况），或者更深入地研究成本和使用情况数据，从而发现趋势，查明成本动因素并检测异常情况。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/aws/" rel="tag"># aws</a>
+              <a href="/tags/sap/" rel="tag"># sap</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/11/28/Node%E7%8A%B6%E6%80%81/" rel="prev" title="kubernetes节点（Node）状态">
+                  <i class="fa fa-chevron-left"></i> kubernetes节点（Node）状态
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Long Kaixiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+</body>
+</html>
