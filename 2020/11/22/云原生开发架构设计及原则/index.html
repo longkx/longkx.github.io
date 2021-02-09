@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="[toc] 云原生起源云原生（Cloud Native）的概念，由来自Pivotal的MattStine于2013年首次提出，被一直延续使用至今。这个概念是Matt Stine根据其多年的架构和咨询经验总结出来的一个思想集合，并得到了社区的不断完善，内容非常多，包括DevOps、持续交付（Continuous Delivery）、微服务（MicroServices）、敏捷基础设施（Agile In">
+<meta property="og:type" content="article">
+<meta property="og:title" content="aws sap笔记">
+<meta property="og:url" content="http://example.com/2020/11/22/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E5%8F%8A%E5%8E%9F%E5%88%99/index.html">
+<meta property="og:site_name" content="Longkx&#39;s notebook">
+<meta property="og:description" content="[toc] 云原生起源云原生（Cloud Native）的概念，由来自Pivotal的MattStine于2013年首次提出，被一直延续使用至今。这个概念是Matt Stine根据其多年的架构和咨询经验总结出来的一个思想集合，并得到了社区的不断完善，内容非常多，包括DevOps、持续交付（Continuous Delivery）、微服务（MicroServices）、敏捷基础设施（Agile In">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMpogiceTibfSgH4cCqBkOBGwNSzXKKukBKT0icBypVJh2EUBSic8sF2a89Q/640?wx_fmt=jpeg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMZUq4xZJSjOByqw7tjkItX6wich9ZQnk0nXn9nvsCFGAq0ttudazkdTg/640?wx_fmt=jpeg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMkUgf9zOLiaE4g3pENC96ibscJZvrU1kAG3kicdksIic6xIIavChluz2jJg/640?wx_fmt=jpeg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMoticRXbQmVB0QZiaDuehul8o03RZMN3vIdZ8s4RoKY2reDXr6ebExuLg/640?wx_fmt=jpeg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMxUeQFUUYricTaic2gywNqDr3ZAmbyEj5tEkLpicnQibO7CJCIibicVibICbuA/640?wx_fmt=jpeg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMZ9sfPkhZrKx3KjrObibbLBXR5S4lJpiaKNtsmM9hXHg8K3OnHBhHWCcQ/640?wx_fmt=jpeg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMrAiaRbPb4oGAzFShWia9AIRfAvf77iczDuGc9YD9diciabQFHGdjRN3VRXg/640?wx_fmt=jpeg">
+<meta property="article:published_time" content="2020-11-21T17:30:08.000Z">
+<meta property="article:modified_time" content="2021-02-09T17:43:15.647Z">
+<meta property="article:author" content="Long Kaixiang">
+<meta property="article:tag" content="aws">
+<meta property="article:tag" content="sap">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMpogiceTibfSgH4cCqBkOBGwNSzXKKukBKT0icBypVJh2EUBSic8sF2a89Q/640?wx_fmt=jpeg">
+
+
+<link rel="canonical" href="http://example.com/2020/11/22/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E5%8F%8A%E5%8E%9F%E5%88%99/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>aws sap笔记 | Longkx's notebook</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Longkx's notebook</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%91%E5%8E%9F%E7%94%9F%E8%B5%B7%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">云原生起源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%8F%E6%8D%B7%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD"><span class="nav-number">2.</span> <span class="nav-text">敏捷基础设施</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98"><span class="nav-number">3.</span> <span class="nav-text">持续交付</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DevOps"><span class="nav-number">4.</span> <span class="nav-text">DevOps</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">5.</span> <span class="nav-text">微服务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12%E8%A6%81%E7%B4%A0"><span class="nav-number">6.</span> <span class="nav-text">12要素</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Long Kaixiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/22/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BC%80%E5%8F%91%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E5%8F%8A%E5%8E%9F%E5%88%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Long Kaixiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Longkx's notebook">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          aws sap笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-22 01:30:08" itemprop="dateCreated datePublished" datetime="2020-11-22T01:30:08+08:00">2020-11-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-02-10 01:43:15" itemprop="dateModified" datetime="2021-02-10T01:43:15+08:00">2021-02-10</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/aws/" itemprop="url" rel="index"><span itemprop="name">aws</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>[toc]</p>
+<h1 id="云原生起源"><a href="#云原生起源" class="headerlink" title="云原生起源"></a>云原生起源</h1><p><strong>云原生（Cloud Native）</strong>的概念，由来自Pivotal的MattStine于2013年首次提出，被一直延续使用至今。这个概念是Matt Stine根据其多年的架构和咨询经验总结出来的一个思想集合，并得到了社区的不断完善，内容非常多，<strong>包括DevOps、持续交付（Continuous Delivery）、微服务（MicroServices）、敏捷基础设施（Agile Infrastructure）和12要素（TheTwelve-Factor App）等几大主题，</strong>不但包括根据业务能力对公司进行文化、组织架构的重组与建设，也包括方法论与原则，还有具体的操作工具。采<strong>用基于云原生的技术和管理方法，可以更好地把业务生于“云”或迁移到云平台，从而享受“云”的高效和持续的服务能力。</strong>顾名思义，云原生是面向“云”而设计的应用，因此技术部分依赖于在传统云计算的3层概念（基础设施即服务（IaaS）、平台即服务（PaaS）和软件即服务（SaaS）），例如，敏捷的不可变基础设施交付类似于IaaS，用来提供计算网络存储等基础资源，这些资源是可编程且不可变的，直接通过API可以对外提供服务；有些应用通过PaaS服务本来就能组合成不同的业务能力，不一定需要从头开始建设；还有一些软件只需要“云”的资源就能直接运行起来为云用户提供服务，即SaaS能力，用户直接面对的就是原生的应用。应用基于云服务进行架构设计，对技术人员的要求更高，除了对业务场景的考虑外，对隔离故障、容错、自动恢复等非功能需求会考虑更多。借助云服务提供的能力也能实现更优雅的设计，比如弹性资源的需求、跨机房的高可用、11个9（99.999999999%）的数据可靠性等特性，基本是云计算服务本身就提供的能力，开发者直接选择对应的服务即可，一般不需要过多考虑本身机房的问题。如果架构设计本身又能支持多云的设计，可用性会进一步提高，比如Netflix能处理在AWS的某个机房无法正常工作的情况，还能为用户提供服务，这就是“云”带来的魔力，当然，云也会带来更多的隔离等问题。如图1-4所示，目前业界公认的云原生主要包括以下几个层面的内容。<img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMpogiceTibfSgH4cCqBkOBGwNSzXKKukBKT0icBypVJh2EUBSic8sF2a89Q/640?wx_fmt=jpeg" alt="img"></p>
+<h1 id="敏捷基础设施"><a href="#敏捷基础设施" class="headerlink" title="敏捷基础设施"></a>敏捷基础设施</h1><p>正如通过业务代码能够实现产品需求、通过版本化的管理能够保证业务的快速变更，基于云计算的开发模式也要考虑如何保证基础资源的提供能够根据代码自动实现需求，并实现记录变更，保证环境的一致性。使用软件工程中的原则、实践和工具来提供基础资源的生命周期管理，这意味着工作人员可以更频繁地构建更强可控或更稳定的基础设施，开发人员可以随时拉取一套基础设施来服务于开发、测试、联调和灰度上线等需求。当然，同时要求业务开发具有较好的架构设计，不需要依赖本地数据进行持久化，所有的资源都是可以随时拉起，随时释放，同时以API的方式提供弹性、按需的计算、存储能力。</p>
+<p>技术人员部署服务器、管理服务器模板、更新服务器和定义基础设施的模式都是通过代码来完成的，并且是自动化的，不能通过手工安装或克隆的方式来管理服务器资源，运维人员和开发人员一起以资源配置的应用代码为中心，不再是一台台机器。基础设施通过代码来进行更改、测试，在每次变更后执行测试的自动化流程中，确保能维护稳定的基础设施服务。此外，基础设施的范围也会更加广泛，不仅包括机器，还包括不同的机柜或交换机、同城多机房、异地多机房等，这些内容也会在后续章节中逐一进行部分讨论。</p>
+<h1 id="持续交付"><a href="#持续交付" class="headerlink" title="持续交付"></a>持续交付</h1><p>为了满足业务需求频繁变动，通过快速迭代，产品能做到随时都能发布的能力，是一系列的开发实践方法。它分为持续集成、持续部署、持续发布等阶段，用来确保从需求的提出到设计开发和测试，再到让代码快速、安全地部署到产品环境中。</p>
+<p>持续集成是指每当开发人员提交了一次改动，就立刻进行构建、自动化测试，确保业务应用和服务能符合预期，从而可以确定新代码和原有代码能否正确地集成在一起。持续交付是软件发布的能力，在持续集成完成之后，能够提供到预发布之类系统上，达到生产环境的条件，持续部署是指使用完全的自动化过程来把每个变更自动提交到测试环境中，然后将应用安全地部署到产品环境中，打通开发、测试、生产的各个环节，自动持续、增量地交付产品，也是大量产品追求的最终目的，当然，在实际运行的过程中，有些产品会增加灰度发布等环境。总之，它更多是代表一种软件交付的能力，过程示例请参考下图。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMZUq4xZJSjOByqw7tjkItX6wich9ZQnk0nXn9nvsCFGAq0ttudazkdTg/640?wx_fmt=jpeg" alt="img"></p>
+<h1 id="DevOps"><a href="#DevOps" class="headerlink" title="DevOps"></a>DevOps</h1><p>DevOps如果从字面上来理解只是Dev（开发人员）+Ops（运维人员），实际上，它是一组过程、方法与系统的统称，其概念从2009年首次提出发展到现在，内容也非常丰富，有理论也有实践，包括组织文化、自动化、精益、反馈和分享等不同方面。</p>
+<p>首先，组织架构、企业文化与理念等，需要自上而下设计，用于促进开发部门、运维部门和质量保障部门之间的沟通、协作与整合，简单而言组织形式类似于系统分层设计。其次，自动化是指所有的操作都不需要人工参与，全部依赖系统自动完成，比如上述的持续交付过程必须自动化才有可能完成快速迭代。再次，DevOps的出现是由于软件行业日益清晰地认识到，为了按时交付软件产品和服务，开发部门和运维部门必须紧密合作。总之，如图所示，DevOps强调的是高效组织团队之间如何通过自动化的工具协作和沟通来完成软件的生命周期管理，从而更快、更频繁地交付更稳定的软件。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMkUgf9zOLiaE4g3pENC96ibscJZvrU1kAG3kicdksIic6xIIavChluz2jJg/640?wx_fmt=jpeg" alt="img"></p>
+<h1 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h1><p>随着企业的业务发展，传统业务架构面临着很多问题。</p>
+<p>其一，单体架构在需求越来越多的时候无法满足其变更要求，开发人员对大量代码的变更会越来越困难，同时也无法很好地评估风险，所以迭代速度慢；</p>
+<p>其二，系统经常会因为某处业务的瓶颈导致整个业务瘫痪，架构无法扩展，木桶效应严重，无法满足业务的可用性要求；</p>
+<p>最后，整体组织效率低下，无法很好地利用资源，存在大量的浪费。因此，组织迫切需要进行变革。随着大量开源技术的成熟和云计算的发展，服务化的改造应运而生，不同的架构设计风格随之涌现，最有代表性的是Netflix公司，它是国外最早基于云进行服务化架构改造的公司，2008年因为全站瘫痪被迫停业3天后，它痛下决心改造，经过将近10年的努力，实现了从单架构到微服务全球化的变迁，满足了业务的千倍增长（如图），并产生了一系列的最佳实践。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMoticRXbQmVB0QZiaDuehul8o03RZMN3vIdZ8s4RoKY2reDXr6ebExuLg/640?wx_fmt=jpeg" alt="img"></p>
+<p>随着微服务化架构的优势展现和快速发展，2013年，MartinFlower对微服务概念进行了比较系统的理论阐述，总结了相关的技术特征。首先，微服务是一种架构风格，也是一种服务；其次，微服务的颗粒比较小，一个大型复杂软件应用由多个微服务组成，比如Netflix目前由500多个的微服务组成；最后，它采用UNIX设计的哲学，每种服务只做一件事，是一种松耦合的能够被独立开发和部署的无状态化服务（独立扩展、升级和可替换）。微服务架构如图所示。<img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMxUeQFUUYricTaic2gywNqDr3ZAmbyEj5tEkLpicnQibO7CJCIibicVibICbuA/640?wx_fmt=jpeg" alt="img"></p>
+<p>由微服务的定义分析可知，一个微服务基本是一个能独立发布的应用服务，因此可以作为独立组件升级、灰度或复用等，对整个大应用的影响也较小，每个服务可以由专门的组织来单独完成，依赖方只要定好输入和输出口即可完全开发，甚至整个团队的组织架构也会更精简，因此沟通成本低、效率高。根据业务的需求，不同的服务可以根据业务特性进行不同的技术选型，是计算密集型还是I/O密集型应用都可以依赖不同的语言编程模型，各团队可以根据本身的特色独自运作。服务在压力较大时，也可以有更多容错或限流服务。微服务架构确实有很多吸引人的地方，然而它的引入也是有成本的，它并不是银弹，使用它会引入更多技术挑战，比如性能延迟、分布式事务、集成测试、故障诊断等方面，企业需要根据业务的不同的阶段进行合理的引入，不能完全为了微服务而“微服务”，本书第5章也会对如何解决这些问题提供对应不同方案的权衡。</p>
+<h1 id="12要素"><a href="#12要素" class="headerlink" title="12要素"></a>12要素</h1><p>“12要素”英文全称是The Twelve-Factor App，最初由Heroku的工程师整理起步，是集体贡献总结的智慧，如图1-9所示。根据基于云的软件开发模式，12要素比较贴切地描述了软件应用的原型，并诠释了使用原生云应用架构的原因。</p>
+<p>比如，一个优雅的互联网应用在设计过程中，需要遵循的一些基本原则和云原生有异曲同工之处。通过强化详细配置和规范，类似Rails的基于“约定优于配置”（convention over configuration）的原则，特别在大规模的软件生产实践中，这些约定非常重要，从无状态共享到水平扩展的过程，从松耦合架构关系到部署环境。基于12要素的上下文关联，软件生产就变成了一个个单一的部署单元；多个联合部署的单元组成一个应用，多个应用之间的关系就可以组成一个复杂的分布式系统应用。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMZ9sfPkhZrKx3KjrObibbLBXR5S4lJpiaKNtsmM9hXHg8K3OnHBhHWCcQ/640?wx_fmt=jpeg" alt="img"></p>
+<p>下面简要介绍图中的这些原则。相信很多开发者在实际开发工作中已经很好地应用了其中的一些原则，只是没有意识到概念本身。对这些原则比较陌生的开发者，如果想了解更多的操作过程，请参阅《云原生时代下的12要素（12-Factor）应用与实践》一文。</p>
+<ol>
+<li><strong>基准代码</strong>每一个部署的应用都在版本控制代码库中被追踪。在多个部署环境中，会有多种部署实例，单个应用只有一份代码库，多份部署相当于运行了该应用的多个实例，比如开发环境一个实例，测试环境、生产环境都有一个实例。实际上，在云计算架构中，所有的基础设施都是代码配置，即Infrastructure as Code（IaC），整个应用通过配置文件就可以编排出来，而不再需要手工的干预，做到基础服务也是可以追踪的。</li>
+<li><strong>依赖</strong>应用程序不会隐式依赖系统级的类库，通过依赖清单声明所有依赖项，通过依赖隔离工具确保程序不会调用系统中存在，但清单中未声明依赖项，并统一应用到生产和开发环境。比如通过合适的工具（例如Maven、Bundler、NPM），应用可以很清晰地对部署环境公开和隔绝依赖性，而不是模糊地对部署环境产生依赖性。在容器应用中，所有应用的依赖和安装都是通过Dockerfile来完成声明的，通过配置能明确把依赖关系，包括版本都明确地图形化展示出来，不存在黑盒。</li>
+<li><strong>配置</strong>环境变量是一种清楚、容易理解和标准化的配置方法，将应用的配置存储于环境变量中，保证配置排除在代码之外，或者其他可能在部署环境（例如研发、展示、生产）之间区别的任何代码，可以通过操作系统级的环境变量来注入。实例根据不同的环境配置运行在不同的环境中，此外，实现配置即代码，在云环境中，无论是统一的配置中心还是分布式的配置中心都有好的实践方式，比如Docker的环境变量使用。</li>
+<li><strong>后端服务</strong>不用区别对待本地或第三方服务，统一把依赖的后端作为一种服务来对待，例如数据库或者消息代理，作为附加资源，同等地在各种环境中被消耗。比如在云架构的基础服务中，计算、网络、存储资源都可以看作是一种服务去对待使用即可，不用区分是远程还是本地的。</li>
+<li><strong>构建、发布、运行</strong>应用严格区分构建、发布、运行这3个阶段。3个阶段是严格分开的，一个阶段对应做一件事情，每个阶段有很明确的实现功能。云原生应用的构建流程可以把发布配置挪到开发阶段，包括实际的代码构建和运行应用所需的生产环境配置。在云原生应用中，基于容器的Build-Ship-Run和这3个阶段完全吻合，也是Docker对本原则的最佳实践。</li>
+<li><strong>进程</strong>进程必须无状态且无共享，即云应用以一个或多个无状态不共享的程序运行。任何必要状态都被服务化到后端服务中（缓存、对象存储等）。所有的应用在设计时就认为随时随地会失败，面向失败而设计，因此进程可能会被随时拉起或消失，特别是在弹性扩容的阶段。</li>
+<li><strong>端口绑定</strong>不依赖于任何网络服务器就可以创建一个面向网络的服务，每个应用的功能都很齐全，通过端口绑定对外提供所有服务，比如Web应用通过端口绑定（Port binding）来提供服务，并监听发送至该端口的请求（包括HTTP）。在容器应用中，应用统一通过暴露端口来服务，尽量避免通过本地文件或进程来通信，每种服务通过服务发现而服务。</li>
+<li><strong>并发</strong>进程可以看作一等公民，并发性即可以依靠水平扩展应用程序来实现，通过进程模型进行扩展，并且具备无共享、水平分区的特性。在互联网的服务中，业务的爆发性随时可能发生，因此不太可能通过硬件扩容来随时提供扩容服务，需要依赖横向扩展能力进行扩容。</li>
+<li><strong>易处理</strong>所有应用的架构设计都需要支持能随时销毁的特点，和状态的无关性保持一致，允许系统快速弹性扩展、改变部署及故障恢复等。在云环境中，由于业务的高低峰值经常需要能实现快速灵活、弹性的伸缩应用，以及不可控的硬件因素等，应用可能随时会发生故障，因此应用在架构设计上需要尽可能无状态，应用能随时随地拉起，也能随时随地销毁，同时保证进程最小启动时间和架构的可弃性，也可以提供更敏捷的发布及扩展过程。</li>
+<li><strong>环境等价</strong>必须缩小本地与线上差异，确保环境的一致性，保持研发、测试和生产环境尽可能相似，这样可以提供应用的持续交付和部署服务。在容器化应用中，通过文件构建的环境运行能做到版本化，因此保证各个不同环境的差异性，同时还能大大减少环境不同带来的排错等成本沟通问题。</li>
+<li><strong>日志</strong>每一个运行的进程都会直接标准输出（stdout）和错误输出（stderr）事件流，还可以将日志当作事件流作为数据源，通过集中服务，执行环境收集、聚合、索引和分析这些事件。日志是系统运行状态的部分体现，无论在系统诊断、业务跟踪还是后续大数据服务的必要条件中，Docker提供标准的日志服务，用户可以根据需求做自定义的插件开发来处理日志。</li>
+<li><strong>管理进程</strong>管理或维护应用的运行状态是软件维护的基础部分，比如数据库迁移、健康检查、安全巡检等，在与应用长期运行的程序相同环境中，作为一次性程序运行。在应用架构模式中，比如Kubernetes里面的Pod资源或者dockerexec，可以随着其他的应用程序一起发布或在出现异常诊断时能通过相关的程序去管理其状态。云原生的内容非常广泛，目前没有系统的说明和完整的定义，上文介绍了云原生应用的基础组件和相关特点，可能读者对云原生应用的逻辑还存在一些困惑。为了更清楚地进行说明，我们总结了其依赖关系，如图所示。</li>
+</ol>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MF3QcUFhrlymZEcezKdnNTwsmz6PmrJMrAiaRbPb4oGAzFShWia9AIRfAvf77iczDuGc9YD9diciabQFHGdjRN3VRXg/640?wx_fmt=jpeg" alt="img"></p>
+<p>首先，为了抓住商业机会，业务需要快速迭代，不断试错，因此，企业需要依赖拥有持续交付的能力，这些不仅包括技术需求还包括产品的需求，如何能拥有持续交付的能力，大而全的架构因为效率低下，显然是不合适的。于是演变出微服务架构来满足需求，通过把系统划分出一个个独立的个体，每个个体服务的设计依赖需要通过12要素的原则来规范完成。<br>同样，如果系统被分成了几十个甚至几百个服务组件，则需要借助DevOps才能很好地满足业务协作和发布等流程。最后，DevOps的有效实施需要依赖一定的土壤，即敏捷的基础设施服务，现实只有云计算的模式才能满足整体要求。通过上述梳理，我们总结出面向云原生应用的3个不同层次的特点。</p>
+<ul>
+<li><strong><em>高可用设计（Design for Availability）\</em></strong>，依据应用业务需求，高可用分为不同级别，比如不同区域、不同机房（跨城或同城）、不同机柜、不同服务器和不同进程的高可用，云原生应用应该根据业务的可用性要求设计不同级别的架构支持。</li>
+<li><strong><em>可扩展设计（Design for Scale）</em></strong>，所有应用的设计是无状态的，使得业务天生具有扩展性，在业务流量高峰和低峰时期，依赖云的特性自动弹性扩容，满足业务需求。</li>
+<li><strong><em>快速失败设计（Design for Failure）</em></strong>，即包括系统间依赖的调用随时可能会失败，也包括硬件基础设施服务随时可能宕机，还有后端有状态服务的系统能力可能有瓶颈，总之在发生异常时能够快速失败，然后快速恢复，以保证业务永远在线，不能让业务半死不活地僵持着。</li>
+</ul>
+<p>通过上面的基本描述及云原生应用的组成或特点，与容器技术（第2章将详细介绍）相比可以得知，容器的特性天生就是按这些原则进行设计的。随着互联网业务的架构不断演进，从单体应用到分布式应用，甚至微服务架构应用中，12要素较好地为构建互联网化应用提供了统一的方法论和标准化，具有强大的生命力，每一条原则都是应用开发的珠玑。当然，在实践过程中，每一个原则也不是一成不变的，随着新的理念和技术出现，原有的因素会得到延伸和发展，会出现新的原则和应用，这套理论也适用于任意语言和后端服务（数据库、消息队列、缓存等）开发的应用程序，因此也作为云原生架构应用的基本指导原则之一。<strong>注：**</strong>本文节选自《云原生应用架构实践》，网易云基础服务架构团队著，全程详解单体到分布式服务化架构的演进。更多精彩内容，敬请期待下期分享。**</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/aws/" rel="tag"># aws</a>
+              <a href="/tags/sap/" rel="tag"># sap</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/11/28/Node%E7%8A%B6%E6%80%81/" rel="prev" title="kubernetes节点（Node）状态">
+                  <i class="fa fa-chevron-left"></i> kubernetes节点（Node）状态
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/22/AWS%20SAP/" rel="next" title="aws sap笔记">
+                  aws sap笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Long Kaixiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+</body>
+</html>
